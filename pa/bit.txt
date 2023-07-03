@@ -1,0 +1,79 @@
+// C Program to implement Bit Stuffing, encoding and decoding concept in DDL
+
+#include <stdio.h>
+#include <string.h>
+void main()
+{
+    int n;
+    printf("Enter size of frame: ");
+    scanf("%d", &n);
+    int frame[n];
+    printf("Enter the frame:\n");
+    for (int i = 0; i < n; i++)
+    {
+        scanf("%d", &frame[i]);
+    }
+
+    // sender
+
+    int res[50];
+    res[0]=0;
+    int j = 1;
+    for(j=1; j<=6; j++) res[j]=1;
+    res[7] = 0;
+    j=8;
+
+    int count=0;
+    for (int i = 0; i < n; i++)
+    {
+        if(frame[i] == 0){
+            count = 0;
+            res[j++] = frame[i];
+        }
+        
+        if(frame[i] == 1){
+            count++;
+            res[j++] = frame[i];
+            if(count == 5){
+                res[j++] = 0;
+            }
+        }
+    }
+    res[j++]=0;
+    for(int i=1; i<=6; i++) res[j++]=1;
+    res[j++] = 0;
+
+    printf("Total len: %d\n",j);
+    printf("message sent: ");
+    for(int i=0; i<j; i++){
+        printf("%d",res[i]);
+    }
+    printf("\n");
+
+
+    //receiver
+
+    int mesg[50];
+    int k=0;
+    count=0;
+    for (int i = 8; i < j-8; i++)
+    {
+        if(res[i] == 0){
+            count = 0;
+            mesg[k++] = res[i];
+        }
+        
+        if(res[i] == 1){
+            count++;
+            mesg[k++] = res[i];
+            if(count == 5){
+                i++;
+            }
+        }
+    }
+
+    printf("message received: ");
+    for(int i=0; i<k; i++){
+        printf("%d",mesg[i]);
+    }
+}

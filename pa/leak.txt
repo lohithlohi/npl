@@ -1,0 +1,57 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+int min(int x, int y){
+    return (x>y)?y:x;
+}
+
+int main()
+{
+    printf("Enter max bucket size/capacity: ");
+    int cap; scanf("%d",&cap);
+
+    printf("Enter output rate: ");
+    int outrate; scanf("%d",&outrate);
+    
+    int i=0, input[10]={0}, ch=0, count=0, storage=0, drop = 0, sum = 0;
+
+    do{
+        printf("Enter input packet size in sec %d: ",i+1);
+        scanf("%d",&input[i]);
+
+        sum+= input[i];
+        if(sum > cap){
+            printf("Bucket overflow\n");
+            exit(0);
+        }
+        i++;
+        printf("Enter 1 to continue else 0: ");
+        scanf("%d",&ch);
+    }while(ch);
+
+    int nsec = i;
+
+    printf("Sec\tReceived\tSent\tDroped\tRemained\n");
+    for (int i = 0; i < nsec || count ; i++)
+    {
+        printf("%d\t",i+1);
+        printf("%d\t\t",input[i]);
+        printf("%d\t",min((input[i]+count) , outrate));
+
+        if((storage = input[i]+count-outrate) > 0){
+            if(storage > cap){
+                count = cap;   // full capacity
+                drop = storage - cap;
+            }
+            else{
+                count = storage;
+                drop = 0;
+            }
+        }else{
+            drop = 0;
+            count = 0;
+        }
+        printf("%d\t%d\n",drop,count);
+    }
+    return 0;
+}

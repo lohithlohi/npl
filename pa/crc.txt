@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <string.h>
+
+#define N strlen(genpol)
+char data[28], genpol[10], checkval[28];
+int datalen, i, j;
+
+void XOR()
+{
+    for (j = 1; j < N; j++)
+    {
+        checkval[j] = ((checkval[j] == genpol[j]) ? '0' : '1');
+    }
+}
+
+void crc()
+{
+    for (i = 0; i < N; i++)
+    {
+        checkval[i] = data[i];
+    }
+
+    do
+    {
+        if (checkval[0] == '1')
+            XOR();
+
+        for (j = 0; j < N - 1; j++)
+        {
+            checkval[j] = checkval[j + 1];
+        }
+        checkval[j] = data[i++];
+    } while (i <= datalen + N - 1);
+}
+
+void receiver()
+{
+    printf("Enter data received: ");
+    scanf("%s", &data);
+
+    crc();
+
+    for (i = 0; i < N - 1 && checkval[i] != '1'; i++)
+        ;
+    if (i < N - 1)
+    {
+        printf("Error detected\n");
+    }
+    else
+    {
+        printf("NO Error detected\n");
+    }
+}
+
+int main()
+{
+
+    printf("Enter data to send: ");
+    scanf("%s", &data);
+
+    printf("Enter gen poly: ");
+    scanf("%s", &genpol);
+
+    datalen = strlen(data);
+
+    printf("N = %d\n", N);
+    for (i = datalen; i < datalen + N - 1; i++)
+    {
+        data[i] = '0';
+    }
+
+    printf("after data padding: %s\n", data);
+
+    crc();
+
+    printf("CRC or checkval: %s\n", checkval);
+
+    for (i = datalen; i < datalen + N - 1; i++)
+    {
+        data[i] = checkval[i - datalen];
+    }
+
+    printf("Data sent: %s\n", data);
+
+    receiver();
+
+    return 0;
+}
